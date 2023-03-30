@@ -9,10 +9,10 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
-
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/google/uuid"
+	"github.com/j-weigle/blogserver/pkg/utils"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -139,8 +139,13 @@ func main() {
 
 	// image group
 	image := app.Group("/image", func(c *fiber.Ctx) error {
-		fmt.Println("IMAGE")
-		// TODO add authentication here so image posting is protected
+		// TODO replace this function with middleware to image group handler calls, such as:
+		// image.Post("/", middleware.JWTValidation(), handler)
+		jWTMetadata, err := utils.GetJWTMetadata(c)
+		if err != nil || jWTMetadata == nil {
+			// TODO
+		}
+
 		return c.Next()
 	})
 
