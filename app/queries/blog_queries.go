@@ -2,7 +2,7 @@
 package queries
 
 import (
-	"github.com/j-weigle/blogserver/models"
+	"github.com/j-weigle/blogserver/app/models"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -12,7 +12,7 @@ type BlogQueries struct {
 }
 
 // GetBlogs will select all blog posts from the database
-func (q *BlogQueries) GetBlogs() ([]models.Blog, error) {
+func (q *BlogQueries) GetBlogs() ([]models.BlogPost, error) {
 	blogs := []models.BlogPost{}
 
 	query := "SELECT * FROM posts"
