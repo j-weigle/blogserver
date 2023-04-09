@@ -1,4 +1,4 @@
-// utils offers utility functions for parsing information from headers and cookies
+// Package utils offers utility functions for parsing information from headers and cookies
 package utils
 
 import (
@@ -6,9 +6,13 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 )
 
+// CreateJWT creates a new JSON Web Token
+//
+// environment variable JWT_KEY is used to sign the token
+// environment variable JWT_EXPIRATION_MINUTES is used to set the expiration
 func CreateJWT() (string, error) {
 	key := os.Getenv("JWT_KEY")
 
@@ -17,9 +21,9 @@ func CreateJWT() (string, error) {
 		return "", err
 	}
 
-	claims := jwt.MapClaims{}
-
-	claims["expiration"] = time.Now().Add(time.Minute * time.Duration(duration)).Unix()
+	claims := jwt.MapClaims{
+		"exp": time.Now().Add(time.Minute * time.Duration(duration)).Unix(),
+	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
 

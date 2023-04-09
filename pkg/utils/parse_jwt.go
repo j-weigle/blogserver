@@ -1,66 +1,41 @@
-// utils offers utility functions for parsing information from headers and cookies
+// Package utils offers utility functions for parsing information from headers and cookies
 package utils
 
 import (
 	"fmt"
-	"os"
-	"strings"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 )
 
+// JWTMetadata contains any metadata about a JWT that is contained in its claims
 type JWTMetadata struct {
 	Expiration int64
 }
 
-func GetJWTMetadata(c *fiber.Ctx) (*JWTMetadata, error) {
-	token, err := validateToken(c)
-	if err != nil {
-		return nil, err
-	}
+// ParseJWTClaims extracts metadata that is contained within a JWT's claims
+func ParseJWTClaims(claims jwt.MapClaims) (*JWTMetadata, error) {
+	claimsOk := make([]bool, 0, 1)
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if ok && token.Valid {
-		expiration := int64(claims["expiration"].(float64))
+	exp, ok := claims["exp"]
+	claimsOk[0] = ok
+
+	if allClaimsOk(claimsOk) {
+		expiration := int64(exp.(float64))
 
 		return &JWTMetadata{
 			Expiration: expiration,
 		}, nil
-	} else {
-		err = fmt.Errorf("invalid token claims")
 	}
 
-	return nil, err
+	return nil, fmt.Errorf("invalid token claims")
 }
 
-func validateToken(c *fiber.Ctx) (*jwt.Token, error) {
-	rawToken := getTokenFromHeaders(c)
-	if rawToken == "" {
-		return nil, fmt.Errorf("no token found")
-	}
-
-	token, err := jwt.Parse(rawToken, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+func allClaimsOk(claimsOk []bool) bool {
+	for _, ok := range claimsOk {
+		if !ok {
+			return false
 		}
-
-		return []byte(os.Getenv("JWT_KEY")), nil
-	})
-	if err != nil {
-		return nil, err
 	}
 
-	return token, nil
-}
-
-func getTokenFromHeaders(c *fiber.Ctx) string {
-	bearerToken := c.Get("Authorization")
-
-	token := strings.Split(bearerToken, " ")
-	if len(token) == 2 {
-		return token[1]
-	}
-
-	return ""
+	return true
 }
