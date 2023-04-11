@@ -3,7 +3,7 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/j-weigle/blogserver/app/handlers"
+	"github.com/j-weigle/blogserver/pkg/handlers"
 	"github.com/j-weigle/blogserver/pkg/middleware"
 )
 
@@ -17,6 +17,7 @@ func PrivateRoutes(app *fiber.App) {
 	postRoute.Delete("/", handlers.DeletePost)
 
 	imageRoute := route.Group("/image", middleware.UseJWT())
+	//imageRoute := route.Group("/image")
 	imageRoute.Post("/", handlers.CreateImage)
 	imageRoute.Put("/", handlers.UpdateImage)
 	imageRoute.Delete("/", handlers.DeleteImage)

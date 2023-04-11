@@ -1,7 +1,7 @@
 // Package database gives access to opening and querying available databases
 package database
 
-import "github.com/j-weigle/blogserver/app/queries"
+import "github.com/j-weigle/blogserver/pkg/queries"
 
 // Queries collects all possible app queries into one place
 type Queries struct {

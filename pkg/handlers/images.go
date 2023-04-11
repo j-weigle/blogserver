@@ -3,7 +3,9 @@ package handlers
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"strings"
 	"time"
 
@@ -41,22 +43,50 @@ func CreateImage(c *fiber.Ctx) error {
 		})
 	}
 
-	file, err := c.FormFile("image")
-
+	fileHeader, err := c.FormFile("image")
 	if err != nil {
 		log.Println("image upload error --> ", err)
-		return c.JSON(fiber.Map{"status": 500, "message": "Server error", "data": nil})
+		return c.JSON(fiber.Map{"status": "error", "error": fiber.Map{
+			"message": "Server error",
+		}})
+	}
+
+	file, err := fileHeader.Open()
+	if err != nil {
+		c.SendStatus(500)
+		return c.JSON(fiber.Map{"status": "error", "error": fiber.Map{
+			"message": "Server error",
+		}})
+	}
+	defer file.Close()
+
+	d, err := io.ReadAll(file)
+	if err != nil {
+		c.SendStatus(500)
+		return c.JSON(fiber.Map{"status": "error", "error": fiber.Map{
+			"message": "Server error",
+		}})
+	}
+
+	fType := http.DetectContentType(d)
+
+	if !isAcceptableFileType(fType) {
+		c.SendStatus(415)
+		return c.JSON(fiber.Map{"status": "error", "error": fiber.Map{
+			"message":  "valid file types: jpeg, png",
+			"fileType": fType,
+		}})
 	}
 
 	uniqueID := uuid.New()
 
 	fileName := strings.Replace(uniqueID.String(), "-", "", -1)
 
-	fileExt := strings.Split(file.Filename, ".")[1]
+	fileExt := strings.Split(fileHeader.Filename, ".")[1]
 
 	image := fmt.Sprintf("%s.%s", fileName, fileExt)
 
-	err = c.SaveFile(file, fmt.Sprintf("/srv/blog/images/%s", image))
+	err = c.SaveFile(fileHeader, fmt.Sprintf("/srv/blog/images/%s", image))
 
 	if err != nil {
 		log.Println("image save error --> ", err)
@@ -68,8 +98,8 @@ func CreateImage(c *fiber.Ctx) error {
 	data := map[string]interface{}{
 		"imageName": image,
 		"imageURL":  imageURL,
-		"header":    file.Header,
-		"size":      file.Size,
+		"header":    fileHeader.Header,
+		"size":      fileHeader.Size,
 	}
 
 	// TODO insert into database as well
@@ -87,4 +117,15 @@ func UpdateImage(c *fiber.Ctx) error {
 func DeleteImage(c *fiber.Ctx) error {
 	// is protected by JWT middleware
 	return c.SendString("HELLO")
+}
+
+func isAcceptableFileType(ft string) bool {
+	acceptedFileTypes := []string{"image/jpeg", "image/png"}
+
+	for _, t := range acceptedFileTypes {
+		if t == ft {
+			return true
+		}
+	}
+	return false
 }

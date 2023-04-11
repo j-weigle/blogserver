@@ -14,7 +14,7 @@ type JWTMetadata struct {
 
 // ParseJWTClaims extracts metadata that is contained within a JWT's claims
 func ParseJWTClaims(claims jwt.MapClaims) (*JWTMetadata, error) {
-	claimsOk := []bool
+	claimsOk := []bool{}
 
 	exp, ok := claims["exp"]
 	claimsOk = append(claimsOk, ok)

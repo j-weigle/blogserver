@@ -2,7 +2,7 @@
 package queries
 
 import (
-	"github.com/j-weigle/blogserver/app/models"
+	"github.com/j-weigle/blogserver/pkg/models"
 	"github.com/jmoiron/sqlx"
 )
 
