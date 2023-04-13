@@ -14,11 +14,11 @@ type BlogPost struct {
 	Updated  time.Time `db:"updated" json:"updated"`
 	ReadTime int       `db:"read_time" json:"readTime"`
 	Author   *BlogUser `db:"author" json:"author"`
-	Html     string    `db:"html" json:"html"`
+	Content  string    `db:"content" json:"content"`
 }
 
 // BlogPostWithSource includes the source representation of the html from a BlogPost in markdown
 type BlogPostWithSource struct {
-	BlogPost *BlogPost `db:"blog_post" json:"blogPost"`
-	Source   string    `db:"source" json:"source"`
+	BlogPost
+	Source string `db:"source" json:"source"`
 }

@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS blog_users (
 	password TEXT NOT NULL,
 	admin BOOLEAN DEFAULT FALSE NOT NULL,
 	active BOOLEAN DEFAULT TRUE NOT NULL,
-	created TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC') NOT NULL,
+	created TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC') NOT NULL
 );
 
 -- Blog Post table
@@ -17,9 +17,9 @@ CREATE TABLE IF NOT EXISTS blog_posts (
 	id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 	author UUID REFERENCES blog_users (id) NOT NULL,
 	read_time INT NULL,
-	html TEXT NOT NULL
+	content TEXT NOT NULL,
 	created TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC') NOT NULL,
-	updated TIMESTAMP NULL,
+	updated TIMESTAMP NULL
 );
 
 -- Blog Post Source table
