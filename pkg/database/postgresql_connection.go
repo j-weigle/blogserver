@@ -22,8 +22,8 @@ func OpenPostgreSQLConnection() (*sqlx.DB, error) {
 		return nil, err
 	}
 
-	db.setMaxOpenConns(maxOpenConns)
-	db.setMaxIdleConns(maxIdleConn)
+	db.SetMaxOpenConns(maxOpenConns)
+	db.SetMaxIdleConns(maxIdleConns)
 	db.SetConnMaxLifetime(time.Duration(connMaxLifetime))
 
 	if err := db.Ping(); err != nil {
