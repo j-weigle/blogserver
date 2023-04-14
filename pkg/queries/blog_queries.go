@@ -67,16 +67,16 @@ func (q *BlogQueries) CreateBlogPost(b *models.FullBlogPost) error {
 
 // UpdateBlogPost updates a blog post with the information in the provided FullBlogPost
 func (q *BlogQueries) UpdateBlogPost(b *models.FullBlogPost) error {
-	query := "UPDATE blog_posts_full SET author = $1, read_time = $2, content = $3, source = $4, updated = $5"
+	query := "UPDATE blog_posts_full SET author = $2, read_time = $3, content = $4, source = $5, updated = $6 WHERE id = $1"
 
-	_, err := q.Exec(query, b.Author, b.ReadTime, b.Content, b.Source, b.Updated)
+	_, err := q.Exec(query, b.ID, b.Author, b.ReadTime, b.Content, b.Source, b.Updated)
 
 	return err
 }
 
 // DeleteBlogPost deletes a blog post with the given ID
 func (q *BlogQueries) DeleteBlogPost(id uuid.UUID) error {
-	query := "DELETE FROM blog_posts_full where id = $1"
+	query := "DELETE FROM blog_posts_full WHERE id = $1"
 
 	_, err := q.Exec(query, id)
 
