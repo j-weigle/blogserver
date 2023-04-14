@@ -1,11 +1,11 @@
--- Blog Post table
-DROP TABLE blog_posts CASCADE;
+-- Blog Post View
+DROP VIEW blog_posts;
 
--- Blog Post Source table
-DROP TABLE blog_post_source;
+-- Blog Post Full
+DROP TABLE blog_posts_full;
 
 -- Image Metadata table
 DROP TABLE blog_images;
 
 -- User table
-DROP TABLE  blog_users;
+DROP TABLE blog_users;

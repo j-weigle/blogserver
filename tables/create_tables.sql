@@ -12,22 +12,26 @@ CREATE TABLE IF NOT EXISTS blog_users (
 	created TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC') NOT NULL
 );
 
--- Blog Post table
-CREATE TABLE IF NOT EXISTS blog_posts (
+-- Blog Post Full table
+CREATE TABLE IF NOT EXISTS blog_posts_full (
 	id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-	author UUID REFERENCES blog_users (id) NOT NULL,
+	author UUID REFERENCES blog_users(id) NOT NULL,
 	read_time INT NULL,
 	content TEXT NOT NULL,
+	source TEXT NOT NULL,
 	created TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC') NOT NULL,
 	updated TIMESTAMP NULL
 );
 
--- Blog Post Source table
-CREATE TABLE IF NOT EXISTS blog_post_source (
-	blog_post UUID REFERENCES blog_posts (id) ON DELETE CASCADE,
-	source TEXT NOT NULL,
-	PRIMARY KEY (blog_post)
-);
+-- Blog Post view
+CREATE VIEW blog_posts AS SELECT (
+	id,
+	author,
+	read_time,
+	content,
+	created,
+	updated
+) FROM blog_posts_full;
 
 -- Image Metadata table
 CREATE TABLE IF NOT EXISTS blog_images (
